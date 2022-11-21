@@ -143,7 +143,7 @@ end = st.date_input(
     "End Date",
     datetime(2022, 2, 1))
 
-print(start, type(start))
+#print(start, type(start))
 longitude = st.number_input('Choose longitude', value = 30.523333)
 
 
@@ -157,7 +157,9 @@ latitude = st.number_input('Choose latitude', value = 50.450001)
 #     day_hour = "daily"
 # else:
 #     day_hour = "hourly"
-
+# option = st.selectbox(
+#     'Daily or Hourly?',
+#     ('daily', 'hourly'))
 
 
 st.write('Start date is:', start)
@@ -220,3 +222,28 @@ elif (status == "Year") and (status_t == "max temp"):
 
 #fig2 = plot_period_choose_date(data, period = 'month')
 st.plotly_chart(fig2)
+
+@st.cache
+def convert_df(df, csv= False, xlsx=False):
+    to_download = []
+    if csv:
+        to_download = df.to_csv()
+    elif xlsx:
+        to_download = df.to_excel()
+    return to_download
+
+download = st.radio("Download format: ", ('csv', 'xlsx'))
+
+if download == "csv":
+    csv = convert_df(data, csv=True)
+    filename = 'my_data.csv'
+elif download == "xlsx":
+    csv = convert_df(data, xlsx=True)
+    filename = "my_data.xlsx"
+
+st.download_button(
+    label="Click to download data",
+    data=csv,
+    file_name=filename#,
+    #mime='text/csv',
+)
