@@ -134,9 +134,12 @@ day_hour = "daily"
 
 st.title("Weather App with colourful plots.")
 
+min_date = datetime(1850,5,4)
+
+
 start = st.date_input(
     "Start Date",
-    datetime(2020, 5,4))
+    datetime(2020, 5,4), key='start', min_value=min_date)
 
 
 end = st.date_input(
@@ -148,18 +151,6 @@ longitude = st.number_input('Choose longitude', value = 30.523333)
 
 
 latitude = st.number_input('Choose latitude', value = 50.450001)
-
-# daily_hourly = st.radio(
-#     "Daily or hourly",
-#     ('Daily',"Hourly"))
-
-# if daily_hourly == 'Daily':
-#     day_hour = "daily"
-# else:
-#     day_hour = "hourly"
-# option = st.selectbox(
-#     'Daily or Hourly?',
-#     ('daily', 'hourly'))
 
 
 st.write('Start date is:', start)
@@ -224,26 +215,31 @@ elif (status == "Year") and (status_t == "max temp"):
 st.plotly_chart(fig2)
 
 @st.cache
-def convert_df(df, csv= False, xlsx=False):
+def convert_df(df, csv= False):
     to_download = []
     if csv:
         to_download = df.to_csv()
-    elif xlsx:
-        to_download = df.to_excel()
     return to_download
 
-download = st.radio("Download format: ", ('csv', 'xlsx'))
+download = st.radio("Download format: ", ('Nothing','csv'))
 
 if download == "csv":
     csv = convert_df(data, csv=True)
     filename = 'my_data.csv'
-elif download == "xlsx":
-    csv = convert_df(data, xlsx=True)
-    filename = "my_data.xlsx"
 
-st.download_button(
-    label="Click to download data",
-    data=csv,
-    file_name=filename#,
-    #mime='text/csv',
-)
+
+#st.write(st.session_state)
+
+if st.button('Want to download?'):
+    if download == "Nothing":
+        st.write("Choose format (csv) above and click again")
+    else:
+        st.write('Click download button below')
+        st.download_button(
+            label="Click to download data",
+            data=csv,
+            file_name=filename
+        )
+# else:
+#     st.write('No downloads')
+
