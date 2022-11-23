@@ -135,6 +135,7 @@ day_hour = "daily"
 st.title("Weather App with colourful plots.")
 
 min_date = datetime(1850,5,4)
+min_date_end = datetime(1860,5,4)
 
 
 start = st.date_input(
@@ -144,7 +145,7 @@ start = st.date_input(
 
 end = st.date_input(
     "End Date",
-    datetime(2022, 2, 1))
+    datetime(2022, 2, 1), min_value=min_date_end)
 
 #print(start, type(start))
 longitude = st.number_input('Choose longitude', value = 30.523333)
