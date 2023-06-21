@@ -14,27 +14,28 @@ st.title("Weather App with colourful plots.")
 
 min_date = datetime(1850,5,4)
 
-
-start = st.date_input(
-    "Start Date",
-    datetime(2020, 5,4), key='start', min_value=min_date)
-
-
-end = st.date_input(
-    "End Date",
-    datetime(2022, 2, 1))
-
-#print(start, type(start))
-longitude = st.number_input('Choose longitude', value = 30.523333)
+with st.sidebar:
+    st.header("Pick date, lat and long:")
+    start = st.date_input(
+        "Start Date",
+        datetime(2020, 5,4), key='start', min_value=min_date)
 
 
-latitude = st.number_input('Choose latitude', value = 50.450001)
+    end = st.date_input(
+        "End Date",
+        datetime(2022, 2, 1))
+
+    #print(start, type(start))
+    longitude = st.number_input('Choose longitude', value = 30.523333)
 
 
-st.write('Start date is:', start)
-st.write('End date is:', end)
-st.write('Longitude: ', longitude)
-st.write('Latitude: ', latitude)
+    latitude = st.number_input('Choose latitude', value = 50.450001)
+
+
+#st.write('Start date is:', start)
+#st.write('End date is:', end)
+#st.write('Longitude: ', longitude)
+#st.write('Latitude: ', latitude)
 
 #start = datetime(2015,1,1)
 #end = datetime(2020,1,1)
@@ -46,6 +47,8 @@ stations = stations.nearby(latitude,longitude)
 stations = stations.inventory(day_hour, (start, end))
 station = stations.fetch(1)
 more_stations = stations.fetch(3)
+more_stations = more_stations.set_index("name", drop=True)
+more_stations = more_stations[["country", "latitude", "longitude","elevation"]]
 
 # # Get daily data
 data = Daily(station, start, end)
@@ -55,6 +58,7 @@ st.write("Station: ", station['name'].iloc[0])
 
 st.write('The three closest stations to chosen lat/long:')
 st.dataframe(more_stations)
+st.write("Glimpse at data of chosen station:")
 st.dataframe(data.head(2))
 
 #st.dataframe(data)
@@ -99,24 +103,25 @@ def convert_df(df, csv= False):
         to_download = df.to_csv()
     return to_download
 
-download = st.radio("Download format: ", ('Nothing','csv'))
 
-if download == "csv":
-    csv = convert_df(data, csv=True)
-    filename = 'my_data.csv'
 
 
 #st.write(st.session_state)
+with st.sidebar:
+    download = st.radio("Download format: ", ('Nothing','csv'))
 
-if st.button('Want to download?'):
-    if download == "Nothing":
-        st.write("Choose format (csv) above and click again")
-    else:
-        st.write('Click download button below')
-        st.download_button(
-            label="Click to download data",
-            data=csv,
-            file_name=filename
+    if download == "csv":
+        csv = convert_df(data, csv=True)
+        filename = 'my_data.csv'
+    if st.button('Want to download?'):
+        if download == "Nothing":
+            st.write("Choose format (csv) above and click again")
+        else:
+            st.write('Click download button below')
+            st.download_button(
+                label="Click to download data",
+                data=csv,
+                file_name=filename
         )
 # else:
 #     st.write('No downloads')
