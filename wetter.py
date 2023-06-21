@@ -108,21 +108,23 @@ def convert_df(df, csv= False):
 
 #st.write(st.session_state)
 with st.sidebar:
-    download = st.radio("Download format: ", ('Nothing','csv'))
+    with st.form(key="my_download"):
+        download = st.radio("Download format: ", ('Nothing','csv'))
 
-    if download == "csv":
-        csv = convert_df(data, csv=True)
-        filename = 'my_data.csv'
-    if st.button('Want to download?'):
-        if download == "Nothing":
-            st.write("Choose format (csv) above and click again")
-        else:
-            st.write('Click download button below')
-            st.download_button(
-                label="Click to download data",
-                data=csv,
-                file_name=filename
-        )
+        if download == "csv":
+            csv = convert_df(data, csv=True)
+            filename = 'my_data.csv'
+        st.form_submit_button("download")
+    # if st.button('Want to download?'):
+    #     if download == "Nothing":
+    #         st.write("Choose format (csv) above and click again")
+    #     else:
+    #         st.write('Click download button below')
+    #         st.download_button(
+    #             label="Click to download data",
+    #             data=csv,
+    #             file_name=filename
+    #     )
 # else:
 #     st.write('No downloads')
 
