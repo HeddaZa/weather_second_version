@@ -97,34 +97,42 @@ elif (status == "Year") and (status_t == "max temp"):
 st.plotly_chart(fig2)
 
 @st.cache
-def convert_df(df, csv= False):
-    to_download = []
-    if csv:
+def convert_df(df, type = "csv", name = "my_data"):
+    if type == "csv":
         to_download = df.to_csv()
-    return to_download
+        name = f'{name}.csv'
+    elif type == "pickle":
+        name = f'{name}.pkl'
+        to_download = df.to_pickle(name)       
+    elif type == "xlsx":
+        name = f'{name}.xlsx'
+        to_download = df.to_excel(name)
+        
+    else:
+        raise ValueError("Unknown type")
+    return to_download, name
 
 
 
 
 #st.write(st.session_state)
 with st.sidebar:
-    with st.form(key="my_download"):
-        download = st.radio("Download format: ", ('Nothing','csv'))
+    #with st.form(key="my_download"):
+    ##download = st.radio("Download format: ", ('csv',"xlsx",'pickle'))
 
-        if download == "csv":
-            csv = convert_df(data, csv=True)
-            filename = 'my_data.csv'
-        st.form_submit_button("download")
-    # if st.button('Want to download?'):
-    #     if download == "Nothing":
-    #         st.write("Choose format (csv) above and click again")
-    #     else:
-    #         st.write('Click download button below')
-    #         st.download_button(
-    #             label="Click to download data",
-    #             data=csv,
-    #             file_name=filename
-    #     )
-# else:
-#     st.write('No downloads')
+    # if download == "csv":
+    #     download_data = convert_df(data, type = "csv")
+    # elif download == "pickle":
+    #     download_data = convert_df(data, type = "pickle")
+    # elif download == "xlsx":
+    #     download_data = convert_df(data, type = "xlsx")
+    #download_data, name_download_data = convert_df(data, type = download)
 
+    st.download_button(
+                label="Click to download data",
+                data=convert_df(data, type = "csv")[0],
+                file_name= convert_df(data, type = "csv")[1]
+        )
+
+        #st.form_submit_button("download")
+   
