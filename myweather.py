@@ -7,7 +7,26 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
 
+###### data cleaning functions:
+def fill_nans(data):
+    """fills nans of several columns"""
+    nan_dict = {
+        "prcp":0,
+        "snow":0,
+        "tmin":"ffill",
+        "wspd":"ffill",
+        "pres":"ffill"
+    }
+    return data.fillna(nan_dict)
 
+def drop_columns_with_more_than_80_nan(data):
+    """drops columns with more than 80% nans"""
+    value_count_nan = data.isnull().sum()/data.shape[0]
+    over_80 = value_count_nan[value_count_nan >= 0.8].index
+    return data.drop(columns =  over_80)
+
+
+###### plot functions:
 def subplots(reset):
     ''' 
     plots three subplots: 
