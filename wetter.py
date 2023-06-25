@@ -32,13 +32,6 @@ with st.sidebar:
     latitude = st.number_input('Choose latitude', value = 50.450001)
 
 
-#st.write('Start date is:', start)
-#st.write('End date is:', end)
-#st.write('Longitude: ', longitude)
-#st.write('Latitude: ', latitude)
-
-#start = datetime(2015,1,1)
-#end = datetime(2020,1,1)
 start =datetime.combine(start, datetime.min.time())
 end = datetime.combine(end, datetime.min.time())
 
@@ -54,6 +47,11 @@ more_stations = more_stations[["country", "latitude", "longitude","elevation"]]
 data = Daily(station, start, end)
 data = data.fetch()
 
+### clean data:
+data = mw.fill_nans(data)
+data = mw.drop_columns_with_more_than_80_nan(data)
+
+### stations and other stations
 st.write("Station: ", station['name'].iloc[0])
 
 st.write('The three closest stations to chosen lat/long:')
