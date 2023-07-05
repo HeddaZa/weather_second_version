@@ -9,8 +9,11 @@ import myweather as mw
 
 
 day_hour = "daily"
-
 st.title("Weather App with colourful plots.")
+
+info, one_plot, plot_thread, period_plot = st.tabs(["Info", "One Plot", "Plot thread","Period Plot"])
+
+
 
 min_date = datetime(1850,5,4)
 
@@ -51,48 +54,52 @@ data = data.fetch()
 data = mw.fill_nans(data)
 data = mw.drop_columns_with_more_than_80_nan(data)
 
-### stations and other stations
-st.write("Station: ", station['name'].iloc[0])
 
-st.write('The three closest stations to chosen lat/long:')
-st.dataframe(more_stations)
-st.write("Glimpse at data of chosen station:")
-st.dataframe(data.head(2))
+##### INFO TAB: #################################
+with info:
+    st.header("Information")
+### stations and other stations
+    st.write("Station: ", station['name'].iloc[0])
+
+    st.write('The three closest stations to chosen lat/long:')
+    st.dataframe(more_stations)
+    st.write("Glimpse at data of chosen station:")
+    st.dataframe(data.head(2))
 
 #st.dataframe(data)
+with plot_thread:
 
+    fig = mw.subplots(data)
+    #st.header("General Plots")
+    st.plotly_chart(fig,use_container_width=True)
 
-fig = mw.subplots(data)
-st.header("General Plots")
-st.plotly_chart(fig,use_container_width=True)
+with period_plot:
+    status = st.radio("Select Period: ", ('Week', 'Month','Year'))
+    status_t = st.radio("Select Option: ", ('avg temp', 'min temp','max temp'))
 
+    if (status == 'Week') and (status_t == "avg temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'week', t_param="tavg")
+    elif (status == 'Week') and (status_t == "min temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'week', t_param="tmin")
+    elif (status == 'Week') and (status_t == "max temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'week', t_param="tmax")
+    #######
+    elif (status == "Month") and (status_t == "avg temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'month', t_param="tavg")
+    elif (status == "Month") and (status_t == "min temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'month', t_param="tmin")
+    elif (status == "Month") and (status_t == "max temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'month', t_param="tmax")
+    #######
+    elif (status == "Year") and (status_t == "avg temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'year', t_param="tavg")
+    elif (status == "Year") and (status_t == "min temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'year', t_param="tmin")
+    elif (status == "Year") and (status_t == "max temp"):
+        fig2 = mw.plot_period_choose_date(data, period = 'year', t_param="tmax")
 
-status = st.radio("Select Period: ", ('Week', 'Month','Year'))
-status_t = st.radio("Select Option: ", ('avg temp', 'min temp','max temp'))
-
-if (status == 'Week') and (status_t == "avg temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'week', t_param="tavg")
-elif (status == 'Week') and (status_t == "min temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'week', t_param="tmin")
-elif (status == 'Week') and (status_t == "max temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'week', t_param="tmax")
-#######
-elif (status == "Month") and (status_t == "avg temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'month', t_param="tavg")
-elif (status == "Month") and (status_t == "min temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'month', t_param="tmin")
-elif (status == "Month") and (status_t == "max temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'month', t_param="tmax")
-#######
-elif (status == "Year") and (status_t == "avg temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'year', t_param="tavg")
-elif (status == "Year") and (status_t == "min temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'year', t_param="tmin")
-elif (status == "Year") and (status_t == "max temp"):
-    fig2 = mw.plot_period_choose_date(data, period = 'year', t_param="tmax")
-
-#fig2 = plot_period_choose_date(data, period = 'month')
-st.plotly_chart(fig2)
+    #fig2 = plot_period_choose_date(data, period = 'month')
+    st.plotly_chart(fig2)
 
 @st.cache
 def convert_df(df, type = "csv", name = "my_data"):
