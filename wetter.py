@@ -11,7 +11,7 @@ import myweather as mw
 day_hour = "daily"
 st.title("Weather App with colourful plots.")
 
-info, one_plot, plot_thread, period_plot = st.tabs(["Info", "One Plot", "Plot thread","Period Plot"])
+info, plot_thread, period_plot = st.tabs(["Info", "Plot thread","Period Plot"])
 
 
 
@@ -69,7 +69,7 @@ with info:
 
 #st.dataframe(data)
 with plot_thread:
-
+    st.write("Note that if you zoom into one plot, all other plots will do so as well.")
     fig = mw.subplots(data)
     #st.header("General Plots")
     st.plotly_chart(fig,use_container_width=True)
